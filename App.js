@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { Text, View, ScrollView } from 'react-native';
 
+import PlusIcon from "./assets/plus.svg"
+import SearchIcon from "./assets/search.svg"
+
 const App = () => {
 
   return (
@@ -25,9 +28,9 @@ const ContentBody = () => {
         }}>
 
             {
-                [...Array(10)].map((year, i) => {
+                [...Array(11)].map((year, i) => {
                     return (
-                        <Year key={ i } year={ i + 2018 } />
+                        <Year key={ i } year={ i + 2009 } />
                     )
                 })
             }
@@ -37,9 +40,57 @@ const ContentBody = () => {
 
 }
 
+const Day = (props) => {
+
+    return (
+        <View style={{
+            marginVertical: 1,
+            width: props.width,
+            aspectRatio: 1,
+            justifyContent: 'center',
+            borderRadius: '50%',
+            backgroundColor: props.highlight ? '#FF8400' : ''
+        }}>
+
+            <Text style={{
+                fontSize: 10,
+                textAlign: 'center',
+                color: props.highlight ? '#FFFFFF' : '#000000',
+                fontWeight: props.highlight ? '600' : '500'
+            }}>
+                { props.day }
+            </Text>
+
+        </View>
+    );
+}
+
 const Month = (props) => {
 
-    const [day, setDay] = useState(0)
+    const [ today, setToday ] = useState({
+        'day': 1,
+        'month': 'ሰኔ',
+        'year': 2014
+    })
+    const dateIsToday = (day, month, year) => {
+
+        return (
+            day === today.day &&
+            month === today.month &&
+            year === today.year
+        );
+    }
+
+    const isMonth = (month, year) => {
+
+        return (
+            month === today.month &&
+            year === today.year
+        );
+    }
+
+    const [ day, setDay ] = useState(0)
+
     const monthNames = {
         1: "መስከረም",
         2: "ጥቅምት",
@@ -89,27 +140,31 @@ const Month = (props) => {
 
     return (
         <View style={{ backgroundColor: '', width: '30%', marginBottom: 16 }}>
-            <Text style={{ marginBottom: 8, fontSize: 20, fontWeight: 'bold' }}>{ monthNames[props.month] }</Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+            <Text style={{ color: isMonth(monthNames[props.month], props.year) ? '#FF8400' : 'black', marginBottom: 8, fontSize: 20, fontWeight: 'bold' }}>{ monthNames[props.month] }</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
 
                 {
 
                     [...Array(day)].map((x, i) => {
                         return (
-                            <View style={{width: '14.28%', alignItems: 'center'}}>
-                                <Text key={i} style={{marginBottom: 6, fontSize: 10, fontWeight: '400'}}>{ }</Text>
-                            </View>
+                            <Day key={ i } width="14.28%" />
                         );
                     })
 
                 }
                 {
-
-                    [...Array(30)].map((x, i) => {
+                    [...Array(props.month !== 13 ? 30 : props.year % 4 === 3 ? 6 : 5)].map((x, i) => {
                         return (
-                            <View style={{ width: '14.28%', alignItems: 'center' }}>
-                                <Text key={i} style={{ marginBottom: 6, fontSize: 10, fontWeight: '400' }}>{ i + 1 }</Text>
-                            </View>
+                            <Day
+                                highlight={dateIsToday(
+                                    i+1,
+                                    monthNames[props.month],
+                                    props.year
+                                )}
+                                key={ i }
+                                width="14.28%"
+                                day={ i + 1 }
+                            />
                         );
                     })
                 }
@@ -126,7 +181,7 @@ const Year = (props) => {
     return (
         <View style={{ marginBottom: 32 }}>
 
-            <Heading title={props.year} />
+            <Heading color={ props.year === 2014 ? '#FF8400' : 'black' } title={props.year} />
 
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
 
@@ -146,8 +201,8 @@ const Year = (props) => {
 const Heading = (props) => {
 
     return (
-        <View style={{ marginBottom: 16, paddingBottom: 4, borderBottomColor: '#D9D9D9', borderBottomWidth: 0.5 }}>
-            <Text style={{ color: '#FF8400', fontWeight: '700', fontSize: 32, }}>{ props.title }</Text>
+        <View style={{ marginBottom: 16, paddingBottom: 4, borderBottomColor: '#D9D9D9', borderBottomWidth: 0.5, flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={{ color: !! props.color ? props.color : 'black', fontWeight: '700', fontSize: 32, marginRight: 24 }}>{ props.title }</Text>
         </View>
     );
 
@@ -158,16 +213,16 @@ const Header = () => {
     return (
         <View style={{
             flexDirection: 'column-reverse',
-            height: 32 + 56,
+            height: 32 + 60,
             backgroundColor: '#F7F7F7',
             borderBottomColor: '#D9D9D9',
             borderBottomWidth: 0.5,
         }}>
 
-            <View style={{ padding: 16, backgroundColor: '', alignItems: 'center', height: 56, flexDirection: 'row-reverse' }}>
+            <View style={{ paddingHorizontal: 16, backgroundColor: '', alignItems: 'center', height: 60, flexDirection: 'row-reverse' }}>
 
-                <Text> + </Text>
-                <Text> Search </Text>
+                <PlusIcon style={{ marginHorizontal: 8 }} width={ 24 } height={ 24 } />
+                <SearchIcon style={{ marginHorizontal: 20 }} width={ 24 } height={ 24 } />
 
             </View>
 
